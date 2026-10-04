@@ -142,16 +142,25 @@
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    /* 2. HERO: TEXT LEFT, PHOTO RIGHT, 2 BUTTONS UNDER TEXT */
+    /* 2. HERO: TEXT LEFT, PHOTO RIGHT, 2 BUTTONS CENTERED UNDER BOTH */
     .hero-container {
-      min-height: 90vh;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 130px 6vw 60px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-main-row {
+      width: 100%;
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
       gap: 5vw;
       align-items: center;
-      padding: 130px 6vw 70px;
-      max-width: 1400px;
-      margin: 0 auto;
     }
 
     .hero-content {
@@ -177,20 +186,21 @@
       font-size: 18px;
       line-height: 1.65;
       color: #bababa;
-      margin: 0 0 35px;
+      margin: 0;
       font-weight: 300;
       max-width: 580px;
     }
 
-    /* 2 BUTTONS IN 2 COLUMNS UNDER TEXT (NO EXPLORE WORKS TEXT) */
+    /* 2 BUTTONS IN 2 COLUMNS CENTERED UNDER PHOTO AND TEXT */
     .hero-choices-wrap {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
+      margin: 0 auto;
     }
     .choice-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 18px;
     }
     .choice-card-btn {
       position: relative;
@@ -250,7 +260,7 @@
       width: 100%;
       max-width: var(--hero-photo-size);
       height: auto;
-      max-height: 82vh;
+      max-height: 72vh;
       object-fit: contain;
       display: block;
       filter: drop-shadow(0 20px 40px rgba(0,0,0,0.92));
@@ -670,16 +680,19 @@
       .status-pill { display: none; }
 
       .hero-container {
-        grid-template-columns: 1fr;
-        padding-top: 150px;
+        padding-top: 140px;
         text-align: center;
-        gap: 35px;
+        gap: 32px;
+      }
+      .hero-main-row {
+        grid-template-columns: 1fr;
+        gap: 28px;
       }
       .hero-content { text-align: center; }
-      .hero-desc { margin: 0 auto 30px; }
-      .hero-choices-wrap { margin: 0 auto; }
+      .hero-desc { margin: 0 auto; }
+      .hero-choices-wrap { margin: 0 auto; width: 100%; }
       .hero-photo-wrap { order: 2; }
-      .hero-photo { max-width: 380px; max-height: 50vh; }
+      .hero-photo { max-width: 360px; max-height: 48vh; }
       .hero-title { font-size: 48px; }
 
       .case, .case:nth-child(even) { grid-template-columns: 1fr; gap: 20px; }
@@ -719,34 +732,36 @@
 </header>
 
 <main>
-  <!-- 2. HERO: TEXT LEFT, PHOTO RIGHT, 2 BUTTONS UNDER TEXT -->
+  <!-- 2. HERO: TEXT LEFT, PHOTO RIGHT, 2 BUTTONS CENTERED AT THE BOTTOM -->
   <section class="hero-container">
-    <div class="hero-content">
-      <span class="hero-tag">Video Editor · VFX Artist</span>
-      <h1 class="hero-title">FAYNIYFX</h1>
-      <p class="hero-desc">
-        Hi, I'm Max Fayniy. I craft high-retention YouTube storytelling, dynamic esports montages, and cinematic CGI / VFX compositing built to captivate audiences.
-      </p>
+    <div class="hero-main-row">
+      <div class="hero-content">
+        <span class="hero-tag">Video Editor · VFX Artist</span>
+        <h1 class="hero-title">FAYNIYFX</h1>
+        <p class="hero-desc">
+          Hi, I'm Max Fayniy. I craft high-retention YouTube storytelling, dynamic esports montages, and cinematic CGI / VFX compositing built to captivate audiences.
+        </p>
+      </div>
 
-      <!-- 2 BUTTONS IN 2 COLUMNS UNDER TEXT (NO EXPLORE WORKS TEXT) -->
-      <div class="hero-choices-wrap">
-        <div class="choice-grid">
-          <button type="button" class="choice-card-btn" id="hero-btn-editing" onclick="selectCategory('editing')">
-            <span class="choice-btn-name">Editing</span>
-            <span class="choice-btn-sub">YouTube · Esports · Pace</span>
-          </button>
-          
-          <button type="button" class="choice-card-btn" id="hero-btn-vfx" onclick="selectCategory('vfx')">
-            <span class="choice-btn-name">VFX</span>
-            <span class="choice-btn-sub">CGI · Tracking · Cleanup</span>
-          </button>
-        </div>
+      <!-- PHOTO ON THE RIGHT -->
+      <div class="hero-photo-wrap">
+        <img src="Максим_градієнт.png" alt="Max Fayniy — FAYNIYFX" class="hero-photo">
       </div>
     </div>
 
-    <!-- PHOTO ON THE RIGHT -->
-    <div class="hero-photo-wrap">
-      <img src="Максим_градієнт.png" alt="Max Fayniy — FAYNIYFX" class="hero-photo">
+    <!-- 2 BUTTONS CENTERED AT THE BOTTOM UNDER PHOTO AND TEXT -->
+    <div class="hero-choices-wrap">
+      <div class="choice-grid">
+        <button type="button" class="choice-card-btn" id="hero-btn-editing" onclick="selectCategory('editing')">
+          <span class="choice-btn-name">Editing</span>
+          <span class="choice-btn-sub">YouTube · Esports · Pace</span>
+        </button>
+        
+        <button type="button" class="choice-card-btn" id="hero-btn-vfx" onclick="selectCategory('vfx')">
+          <span class="choice-btn-name">VFX</span>
+          <span class="choice-btn-sub">CGI · Tracking · Cleanup</span>
+        </button>
+      </div>
     </div>
   </section>
 
