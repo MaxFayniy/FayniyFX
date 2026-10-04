@@ -142,14 +142,14 @@
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    /* 2. HERO: CINEMATIC LARGE PHOTO, TEXT LEFT, BUTTONS BOTTOM */
+    /* 2. HERO: CINEMATIC LARGE PHOTO, TEXT LEFT, BUTTONS ELEVATED */
     .hero-container {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 95px 5vw 28px;
+      padding: 90px 6vw 40px;
       max-width: 1800px;
       margin: 0 auto;
       position: relative;
@@ -194,7 +194,7 @@
       font-size: 18px;
       line-height: 1.65;
       color: #bababa;
-      margin: 0;
+      margin: 0 0 30px;
       font-weight: 300;
       max-width: 500px;
     }
@@ -228,11 +228,11 @@
       transform: scale(1.02);
     }
 
-    /* 2 BUTTONS IN 2 COLUMNS CENTERED UNDER PHOTO AND TEXT */
+    /* 2 BUTTONS ELEVATED UNDER INTRO TEXT */
     .hero-choices-wrap {
       width: 100%;
-      max-width: 520px;
-      margin: 10px auto 0;
+      max-width: 480px;
+      margin: 0;
       position: relative;
       z-index: 10;
     }
@@ -716,7 +716,27 @@
         max-width: 100%;
       }
       .hero-desc {
+        margin: 0 auto 20px;
+      }
+      .hero-choices-wrap {
+        width: 100%;
+        max-width: 350px;
         margin: 0 auto;
+      }
+      .choice-grid {
+        gap: 10px;
+      }
+      .choice-card-btn {
+        padding: 13px 8px;
+        border-radius: 10px;
+      }
+      .choice-btn-name {
+        font-size: 17px;
+        letter-spacing: 2px;
+      }
+      .choice-btn-sub {
+        font-size: 9.5px;
+        letter-spacing: 0;
       }
       .hero-photo-wrap {
         position: static;
@@ -725,7 +745,7 @@
         height: auto;
         max-height: none;
         order: 2;
-        margin: 10px auto;
+        margin: 15px auto 0;
         pointer-events: auto;
         justify-content: center;
       }
@@ -736,11 +756,6 @@
         max-height: 52vh;
       }
       .hero-title { font-size: 48px; }
-      .hero-choices-wrap {
-        order: 3;
-        margin: 10px auto 35px;
-        width: 100%;
-      }
 
       .case, .case:nth-child(even) { grid-template-columns: 1fr; gap: 20px; }
       .case:nth-child(even) .media, .case:nth-child(even) .case-info { order: initial; }
@@ -788,6 +803,21 @@
         <p class="hero-desc">
           Hi, I'm Max Fayniy. I craft high-retention YouTube storytelling, dynamic esports montages, and cinematic CGI / VFX compositing built to captivate audiences.
         </p>
+
+        <!-- 2 BUTTONS ELEVATED UNDER INTRO TEXT -->
+        <div class="hero-choices-wrap">
+          <div class="choice-grid">
+            <button type="button" class="choice-card-btn" id="hero-btn-editing" onclick="selectCategory('editing')">
+              <span class="choice-btn-name">Editing</span>
+              <span class="choice-btn-sub">YouTube · Esports · Pace</span>
+            </button>
+            
+            <button type="button" class="choice-card-btn" id="hero-btn-vfx" onclick="selectCategory('vfx')">
+              <span class="choice-btn-name">VFX</span>
+              <span class="choice-btn-sub">CGI · Tracking · Cleanup</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- PHOTO ON THE RIGHT -->
@@ -795,28 +825,12 @@
         <img src="Максим_градієнт.png" alt="Max Fayniy — FAYNIYFX" class="hero-photo">
       </div>
     </div>
-
-    <!-- 2 BUTTONS CENTERED AT THE BOTTOM UNDER PHOTO AND TEXT -->
-    <div class="hero-choices-wrap">
-      <div class="choice-grid">
-        <button type="button" class="choice-card-btn" id="hero-btn-editing" onclick="selectCategory('editing')">
-          <span class="choice-btn-name">Editing</span>
-          <span class="choice-btn-sub">YouTube · Esports · Pace</span>
-        </button>
-        
-        <button type="button" class="choice-card-btn" id="hero-btn-vfx" onclick="selectCategory('vfx')">
-          <span class="choice-btn-name">VFX</span>
-          <span class="choice-btn-sub">CGI · Tracking · Cleanup</span>
-        </button>
-      </div>
-    </div>
   </section>
 
-  <!-- 3. SLIDE-UP WORK PANEL: EDITING (3X SMOOTHER ANIMATION) -->
+  <!-- 3. SLIDE-UP WORK PANEL: EDITING -->
   <section class="works-reveal-panel" id="panel-editing">
     <div class="panel-header">
       <div>
-        <span class="panel-badge">01 / Video Editing Showcase</span>
         <h2 class="panel-title">Editing Portfolio</h2>
       </div>
     </div>
@@ -1103,11 +1117,10 @@
     </details>
   </section>
 
-  <!-- 3. SLIDE-UP WORK PANEL: VFX (3X SMOOTHER ANIMATION) -->
+  <!-- 3. SLIDE-UP WORK PANEL: VFX -->
   <section class="works-reveal-panel" id="panel-vfx">
     <div class="panel-header">
       <div>
-        <span class="panel-badge">02 / VFX &amp; CGI Portfolio</span>
         <h2 class="panel-title">VFX &amp; Compositing</h2>
       </div>
     </div>
