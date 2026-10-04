@@ -1,671 +1,1016 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAYNIYFX — Video Editor & VFX Artist</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=DM+Sans:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Montserrat:wght@300;400;600&family=Mulish:wght@300;400;500;600&family=Oswald:wght@300;400;500&family=Playfair+Display:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Poiret+One&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;600;700&family=Unbounded:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #080808;
-            --fg: #f5f5f5;
-            --muted: #999;
-            --line: #292929;
-            --pink: #f2a2c4;
-            --hero-photo-size: 400px;
-            --hero-photo-x: 0px;
-            --hero-photo-y: 0px;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FAYNIYFX — Video Editor & VFX Artist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=DM+Sans:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Montserrat:wght@300;400;600&family=Mulish:wght@300;400;500;600&family=Oswald:wght@300;400;500&family=Playfair+Display:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Poiret+One&family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;600;700&family=Unbounded:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#080808;
+      --fg:#f5f5f5;
+      --muted:#999;
+      --line:#292929;
+      --pink:#f2a2c4;
+      --font-heading:'Poiret One', sans-serif;
+      --font-ui:'Oswald', sans-serif;
+      --font-body:'Mulish', sans-serif;
+      --hero-photo-size:750px;
+      --hero-photo-x:0px;
+      --hero-photo-y:0px;
+      --hero-photo-align:center;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    
+    /* 1. SYMMETRICAL HEADER */
+    .filter-ctrl { display: none; }
+    
+    .header {
+      position: fixed;
+      z-index: 100;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 94%;
+      max-width: 1400px;
+      height: 64px;
+      border: 1px solid #333;
+      border-radius: 40px;
+      background: #121212dc;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    
+    .nav-side {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+    }
+    .nav-side.left { justify-content: flex-start; }
+    .nav-side.right { justify-content: flex-end; }
+    
+    .logo-wrap {
+      flex: 0 0 auto;
+      text-align: center;
+    }
+    .logo {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      letter-spacing: 3px;
+      font-weight: 600;
+      color: #fff;
+      display: inline-block;
+      transition: color .2s;
+    }
+    .logo:hover { color: var(--pink); }
+    
+    .nav-btn {
+      padding: 8px 22px;
+      border: 1px solid #3a3a3a;
+      border-radius: 30px;
+      color: var(--muted);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      background: transparent;
+      transition: all .25s ease;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-btn:hover { color: #fff; border-color: #666; }
+    
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      padding: 8px 16px;
+      border-radius: 30px;
+      transition: all .25s ease;
+    }
+    .nav-link:hover { color: var(--pink); }
+    
+    /* Active filter states in header */
+    #tab-edit:checked ~ .header .btn-edit,
+    #tab-vfx:checked ~ .header .btn-vfx {
+      background: var(--pink);
+      color: #0d0d0d;
+      border-color: var(--pink);
+      font-weight: 600;
+      box-shadow: 0 0 20px rgba(242, 162, 196, 0.35);
+    }
+    
+    /* Filter visibility logic */
+    #tab-edit:checked ~ main .work-vfx { display: none !important; }
+    #tab-vfx:checked ~ main .work-editing { display: none !important; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Mulish', sans-serif;
-            background-color: var(--bg);
-            color: var(--fg);
-            line-height: 1.6;
-        }
+    section{padding:100px 6vw;border-top:1px solid var(--line)}
+    
+    /* 2. HERO SECTION */
+    .hero{
+      min-height:92vh;
+      border:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:4vw;
+      align-items:center;
+      padding-top:130px;
+      overflow:hidden;
+    }
+    .eyebrow{
+      font-family:var(--font-ui);
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:3px;
+      color:var(--pink);
+      margin-bottom:16px;
+    }
+    h1,.title,.contact-title{font-family:var(--font-heading);font-weight:400}
+    .hero h1{
+      font-size:clamp(55px,7.5vw,115px);
+      line-height:.95;
+      margin:0;
+      letter-spacing:1px;
+    }
+    .intro{
+      font-size:18px;
+      line-height:1.6;
+      color:#b5b5b5;
+      max-width:540px;
+      margin-top:24px;
+    }
+    
+    /* Hero Direction Selection Buttons */
+    .hero-directions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 36px;
+      max-width: 520px;
+    }
+    .dir-card {
+      border: 1px solid #2e2e2e;
+      border-radius: 12px;
+      padding: 16px 20px;
+      background: rgba(22, 22, 22, 0.5);
+      cursor: pointer;
+      transition: all .25s ease;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      user-select: none;
+    }
+    .dir-card:hover {
+      border-color: #555;
+      background: rgba(35, 35, 35, 0.7);
+    }
+    .dir-badge {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1px solid #444;
+      background: #181818;
+      color: #ddd;
+      white-space: nowrap;
+      transition: all .25s ease;
+    }
+    .dir-desc {
+      font-size: 13px;
+      color: #999;
+      line-height: 1.4;
+    }
+    
+    /* Sync Hero buttons with active filter */
+    #tab-edit:checked ~ main .dir-card[for="tab-edit"],
+    #tab-vfx:checked ~ main .dir-card[for="tab-vfx"] {
+      border-color: var(--pink);
+      background: rgba(242, 162, 196, 0.08);
+    }
+    #tab-edit:checked ~ main .dir-card[for="tab-edit"] .dir-badge,
+    #tab-vfx:checked ~ main .dir-card[for="tab-vfx"] .dir-badge {
+      background: var(--pink);
+      color: #0d0d0d;
+      border-color: var(--pink);
+      font-weight: 600;
+    }
+    #tab-edit:checked ~ main .dir-card[for="tab-edit"] .dir-desc,
+    #tab-vfx:checked ~ main .dir-card[for="tab-vfx"] .dir-desc {
+      color: #fff;
+    }
 
-        h1, h2, h3, .logo { font-family: 'Syne', sans-serif; }
-        .logo { font-family: 'Poiret One', cursive; font-size: 2rem; letter-spacing: 0.1em; text-decoration: none; color: var(--fg); }
-        
-        a { color: var(--fg); text-decoration: none; }
-        ul { list-style: none; }
+    /* Hero Photo - Natural Proportions without clipping */
+    .hero-photo-wrap {
+      display: flex;
+      justify-content: var(--hero-photo-align);
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .hero-img {
+      width: var(--hero-photo-size);
+      max-width: 100%;
+      height: auto;
+      max-height: 88vh;
+      object-fit: contain;
+      border: none !important;
+      outline: none;
+      background: transparent !important;
+      transform: translate(var(--hero-photo-x), var(--hero-photo-y));
+      display: block;
+      transition: transform 0.25s ease;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+    }
 
-        /* Hide radio buttons */
-        .filter-ctrl { display: none; }
+    /* 3. PORTFOLIO SECTION */
+    .head{display:flex;justify-content:space-between;align-items:end;margin-bottom:45px}
+    .title{font-size:clamp(45px,6.5vw,90px);line-height:.95;margin:0}
+    .meta{font-family:var(--font-ui);font-size:12px;color:var(--muted);letter-spacing:2px}
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: rgba(8, 8, 8, 0.7);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--line);
-            z-index: 100;
-        }
-        
-        .header-left, .header-right { flex: 1; display: flex; align-items: center; }
-        .header-right { justify-content: flex-end; gap: 1rem; }
-        .header-center { flex: 0 0 auto; text-align: center; }
+    /* Selected Work */
+    .selected{display:flex;flex-direction:column;gap:65px;max-width:1080px;margin:0 auto}
+    .case{display:grid;grid-template-columns:380px 1fr;gap:45px;align-items:center}
+    .case:nth-child(even){grid-template-columns:1fr 380px}
+    .case:nth-child(even) .media{order:2}
+    .case:nth-child(even) .case-info{order:1}
 
-        .toggle-btn {
-            font-family: 'Oswald', sans-serif;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            transition: all 0.3s;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-        .toggle-btn:hover { color: var(--fg); border-color: var(--muted); }
-        .products-link {
-            font-family: 'Oswald', sans-serif;
-            color: var(--muted);
-            text-transform: uppercase;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid transparent;
-            transition: all 0.3s;
-        }
-        .products-link:hover { color: var(--fg); border-color: var(--muted); }
+    .media {
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 16/9;
+      border: 1px solid #303030;
+      border-radius: 8px;
+      background: radial-gradient(circle at 70% 30%, #f2a2c422, transparent 28%), linear-gradient(135deg, #1c1c1c, #0a0a0a);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s;
+      cursor: pointer;
+    }
+    .media:hover { border-color: var(--pink); }
+    
+    .video-cover {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .media:hover .video-cover { transform: scale(1.08); }
 
-        /* CSS Filter Logic */
-        #tab-edit:checked ~ header .label-edit,
-        #tab-vfx:checked ~ header .label-vfx,
-        #tab-edit:checked ~ main .hero-label-edit,
-        #tab-vfx:checked ~ main .hero-label-vfx {
-            color: var(--bg);
-            background-color: var(--pink);
-            border-color: var(--pink);
-        }
+    .channel{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .logo-circle{width:38px;height:38px;border-radius:50%;border:1px solid #444;background:#222;display:grid;place-items:center;color:#aaa;font-family:var(--font-ui);font-size:11px}
+    .channel-name{font-family:var(--font-ui);font-size:13px;text-transform:uppercase;letter-spacing:1.5px}
+    .case h3{font-family:var(--font-ui);font-size:22px;text-transform:uppercase;line-height:1.25;margin:0 0 16px}
+    .case h3 a{transition:color .2s}
+    .case h3 a:hover{color:var(--pink)}
+    .quote{border-left:2px solid var(--pink);padding-left:14px;font-family:var(--font-heading);font-size:18px;line-height:1.4;margin:0 0 10px;color:#ddd}
+    .author{font-family:var(--font-ui);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .watch{display:inline-block;margin-top:16px;border-bottom:1px solid #777;padding-bottom:4px;font-family:var(--font-ui);font-size:11px;text-transform:uppercase;letter-spacing:2px}
+    .watch:hover{color:var(--pink);border-color:var(--pink)}
 
-        #tab-edit:checked ~ main [data-category="vfx"] { display: none !important; }
-        #tab-vfx:checked ~ main [data-category="editing"] { display: none !important; }
+    /* More Work (<details>) */
+    details { border: none; margin-top: 75px; }
+    summary {
+      list-style: none;
+      display: block;
+      margin: 0 auto;
+      width: fit-content;
+      padding: 16px 36px;
+      background: transparent;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 40px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      transition: all .25s ease;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary:hover { background: #fff; color: #000; border-color: #fff; }
+    details[open] summary { display: none; }
+    
+    .all { border-top: 1px solid var(--line); margin-top: 60px; padding-top: 60px; }
+    .group{margin-bottom:100px}
+    .group-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+    .group-head h3{font-family:var(--font-ui);font-size:26px;text-transform:uppercase;margin:0;letter-spacing:1px}
+    .count{font-family:var(--font-ui);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
 
-        main { padding-top: 100px; padding-bottom: 50px; min-height: 100vh; }
+    /* Carousels with 1.85x Hover Zoom */
+    .carousel{position:relative}
+    .row {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding: 70px 70px 70px 20px;
+      margin: -60px 0 -50px 0;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+    }
+    .row::-webkit-scrollbar{height: 6px;}
+    .row::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
 
-        /* Hero */
-        .hero {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .hero-content { flex: 1; }
-        .hero h1 { font-size: 4rem; line-height: 1.1; margin-bottom: 0.5rem; text-transform: uppercase; }
-        .hero .subtitle { color: var(--pink); font-family: 'Oswald', sans-serif; font-size: 1.2rem; letter-spacing: 0.05em; margin-bottom: 2rem; }
-        .hero-actions { display: flex; gap: 1rem; }
-        
-        .hero-photo {
-            width: var(--hero-photo-size);
-            height: var(--hero-photo-size);
-            background-color: var(--line);
-            border-radius: 20px;
-        }
+    .card {
+      position: relative;
+      flex: 0 0 min(340px, 38vw);
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      transition: z-index 0.2s ease;
+    }
+    .card:hover {
+      z-index: 50;
+    }
 
-        /* Portfolio */
-        .portfolio-section {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-        }
-        .section-title { font-size: 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
+    .thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: 1px solid #303030;
+      border-radius: 8px;
+      background: #111;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      transform-origin: center center;
+      transition: transform .38s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow .38s, border-color .3s;
+    }
+    .card:hover .thumb {
+      transform: scale(1.85);
+      border-color: var(--pink);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(242, 162, 196, 0.28);
+    }
 
-        /* Selected Work */
-        .selected-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .case-card {
-            background: rgba(41, 41, 41, 0.2);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-        .case-card:hover { transform: translateY(-5px); }
-        .case-media {
-            position: relative;
-            aspect-ratio: 16/9;
-            background: #000;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .case-media img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s; }
-        .case-media:hover img { opacity: 1; }
-        .play-btn {
-            position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 3rem; color: var(--pink);
-            pointer-events: none; opacity: 0.8;
-        }
-        .case-info { padding: 1.5rem; }
-        .case-channel { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-        .case-title { font-size: 1.2rem; margin-bottom: 1rem; cursor: pointer; }
-        .case-title:hover { color: var(--pink); }
-        .case-quote { font-style: italic; color: #ccc; margin-bottom: 1rem; font-size: 0.95rem; }
-        .case-author { font-size: 0.85rem; color: var(--muted); }
+    .play-btn {
+      position: relative;
+      z-index: 2;
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      transition: transform .25s ease, background .25s, border-color .25s, color .25s;
+    }
+    .play-btn:hover {
+      transform: scale(1.15);
+      background: var(--pink);
+      color: #111;
+      border-color: var(--pink);
+    }
 
-        /* More Work */
-        details { margin-bottom: 1rem; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-        summary {
-            padding: 1rem 1.5rem;
-            background: rgba(41, 41, 41, 0.3);
-            cursor: pointer;
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.2rem;
-            list-style: none;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: '+'; font-size: 1.5rem; color: var(--pink); }
-        details[open] summary::after { content: '−'; }
-        
-        .carousel {
-            display: flex;
-            gap: 1.5rem;
-            overflow-x: auto;
-            padding: 2rem 1.5rem;
-            scroll-snap-type: x mandatory;
-        }
-        .carousel::-webkit-scrollbar { height: 8px; }
-        .carousel::-webkit-scrollbar-track { background: var(--bg); }
-        .carousel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+    .video-title {
+      font-family: var(--font-ui);
+      font-size: 15px;
+      text-transform: uppercase;
+      margin-top: 14px;
+      color: #eee;
+      display: inline-block;
+      transition: color .2s;
+      line-height: 1.35;
+    }
+    .video-title:hover {
+      color: var(--pink);
+      text-decoration: underline;
+    }
+    .video-sub {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
 
-        .carousel-item {
-            flex: 0 0 280px;
-            scroll-snap-align: start;
-            border-radius: 8px;
-            overflow: visible;
-        }
-        .carousel-media {
-            position: relative;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .carousel-media img { width: 100%; height: 100%; object-fit: cover; }
-        .carousel-media:hover {
-            transform: scale(1.85);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8), 0 0 15px var(--pink);
-            z-index: 10;
-        }
-        .carousel-info { padding-top: 1rem; }
-        .carousel-title { font-size: 1rem; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .carousel-title:hover { color: var(--pink); }
-        .carousel-meta { font-size: 0.8rem; color: var(--muted); }
+    /* 4. CONTACT FOOTER */
+    .contact{
+      min-height: 65vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .contact-title{
+      font-size: clamp(65px, 10vw, 155px);
+      line-height: .88;
+      margin: 0;
+    }
+    .links{
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+    .links a{
+      border: 1px solid #383838;
+      border-radius: 40px;
+      padding: 14px 26px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all .25s ease;
+    }
+    .links a:hover{
+      background: var(--pink);
+      border-color: var(--pink);
+      color: #111;
+      font-weight: 500;
+    }
+    
+    .footer{
+      border-top: 1px solid var(--line);
+      padding: 26px 6vw;
+      color: #777;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      letter-spacing: 1.5px;
+    }
 
-        /* Contact Footer */
-        .contact-footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--line); margin-top: 4rem; }
-        .contact-footer h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .contact-footer p { color: var(--muted); margin-bottom: 2rem; font-size: 1.2rem; }
-        .contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-        .contact-tag {
-            padding: 0.8rem 2rem;
-            border: 1px solid var(--line);
-            border-radius: 30px;
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-        .contact-tag:hover { background: var(--fg); color: var(--bg); }
+    /* 5. LIGHTBOX MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-box {
+      width: 100%;
+      max-width: 980px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.95);
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid #444;
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 10;
+      transition: background .2s, color .2s;
+    }
+    .modal-close:hover {
+      background: var(--pink);
+      color: #111;
+    }
+    .modal-iframe-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+    .modal-iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
 
-        /* Main Footer */
-        footer {
-            display: flex; justify-content: space-between;
-            padding: 2rem; border-top: 1px solid var(--line);
-            color: var(--muted); font-size: 0.9rem;
-        }
-
-        /* Lightbox */
-        .lightbox {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; transition: opacity 0.3s;
-        }
-        .lightbox.active { display: flex; opacity: 1; }
-        .lightbox-content { width: 90%; max-width: 1000px; aspect-ratio: 16/9; position: relative; }
-        .lightbox-close {
-            position: absolute; top: -40px; right: 0;
-            color: var(--fg); font-size: 2rem; cursor: pointer; background: none; border: none;
-        }
-        .lightbox iframe { width: 100%; height: 100%; border: none; border-radius: 8px; }
-
-        /* Mobile Responsive */
-        @media (max-width: 850px) {
-            header { flex-direction: column; padding: 1rem; gap: 1rem; }
-            .header-left, .header-right { justify-content: center; width: 100%; flex-wrap: wrap; }
-            main { padding-top: 140px; }
-            .hero { flex-direction: column; text-align: center; padding: 2rem 1rem; }
-            .hero-actions { justify-content: center; }
-            .hero-photo { width: 100%; max-width: 400px; margin-top: 2rem; }
-            footer { flex-direction: column; align-items: center; gap: 1rem; }
-            
-            .carousel-media:hover {
-                transform: none;
-                box-shadow: none;
-                z-index: 1;
-            }
-            .carousel { padding: 1rem 0; }
-        }
-    </style>
+    /* RESPONSIVE DESIGN (< 850px) */
+    @media(max-width:850px){
+      .header {
+        height: auto;
+        padding: 14px 18px;
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 20px;
+      }
+      .logo-wrap { order: 1; }
+      .nav-side {
+        width: 100%;
+        justify-content: center !important;
+        gap: 10px;
+      }
+      .nav-side.left { order: 2; }
+      .nav-side.right { order: 3; }
+      .nav-btn, .nav-link { font-size: 11px; padding: 6px 14px; }
+      
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 170px;
+        text-align: center;
+      }
+      .hero h1 { font-size: 52px; }
+      .intro { margin: 18px auto 0; }
+      .hero-directions { margin: 28px auto 0; }
+      .hero-photo-wrap { justify-content: center; margin-top: 25px; }
+      .hero-img {
+        width: 100% !important;
+        max-width: 440px !important;
+        max-height: 55vh;
+        transform: none !important;
+      }
+      
+      .case, .case:nth-child(even) { grid-template-columns: 1fr; gap: 20px; }
+      .case:nth-child(even) .media, .case:nth-child(even) .case-info { order: initial; }
+      .media { max-width: 100%; }
+      .case h3 { font-size: 20px; }
+      .quote { font-size: 16px; }
+      
+      section { padding: 75px 5vw; }
+      .card { flex-basis: 78vw; }
+      .card:hover .thumb { transform: none; box-shadow: none; }
+      .row { padding: 20px 20px 20px 0; margin: 0; }
+      
+      .footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
 </head>
 <body>
 
-    <input type="radio" name="work-filter" id="tab-edit" class="filter-ctrl" checked>
-    <input type="radio" name="work-filter" id="tab-vfx" class="filter-ctrl">
+<!-- CSS-only Filter Controller -->
+<input type="radio" name="work-filter" id="tab-edit" class="filter-ctrl" checked>
+<input type="radio" name="work-filter" id="tab-vfx" class="filter-ctrl">
 
-    <header>
-        <div class="header-left">
-            <label for="tab-edit" class="toggle-btn label-edit">Editing</label>
-        </div>
-        <div class="header-center">
-            <a href="#" class="logo">FAYNIYFX</a>
-        </div>
-        <div class="header-right">
-            <label for="tab-vfx" class="toggle-btn label-vfx">VFX</label>
-            <a href="products.html" class="products-link">Products</a>
-        </div>
-    </header>
+<!-- 1. SYMMETRICAL HEADER -->
+<header class="header">
+  <div class="nav-side left">
+    <label for="tab-edit" class="nav-btn btn-edit">EDITING</label>
+  </div>
+  <div class="logo-wrap">
+    <a class="logo" href="index.html">FAYNIYFX</a>
+  </div>
+  <div class="nav-side right">
+    <label for="tab-vfx" class="nav-btn btn-vfx">VFX</label>
+    <a class="nav-link" href="products.html">PRODUCTS</a>
+  </div>
+</header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>FAYNIYFX</h1>
-                <div class="subtitle">VIDEO EDITOR · VFX ARTIST</div>
-                <div class="hero-actions">
-                    <label for="tab-edit" class="toggle-btn hero-label-edit">[ EDITING ]</label>
-                    <label for="tab-vfx" class="toggle-btn hero-label-vfx">[ VFX / FX ]</label>
-                </div>
-            </div>
-            <div class="hero-photo"></div>
-        </section>
+<main>
+  <!-- 2. HERO SECTION -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Video Editor · VFX Artist</div>
+      <h1>FAYNIYFX</h1>
+      <p class="intro">High-retention storytelling, dynamic YouTube editing &amp; CGI / VFX compositing built to captivate audiences.</p>
+      
+      <div class="hero-directions">
+        <label for="tab-edit" class="dir-card">
+          <span class="dir-badge">[ EDITING ]</span>
+          <span class="dir-desc">Focus on dynamic rhythm, pacing, esports &amp; high-retention YouTube formats.</span>
+        </label>
+        <label for="tab-vfx" class="dir-card">
+          <span class="dir-badge">[ VFX / FX ]</span>
+          <span class="dir-desc">Focus on CGI integration, camera tracking, clean-up &amp; multi-pass compositing.</span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="hero-photo-wrap">
+      <img src="Максим_градієнт.png" alt="Max Fayniy — FAYNIYFX" class="hero-img">
+    </div>
+  </section>
 
-        <section class="portfolio-section">
-            <h2 class="section-title">Selected Work</h2>
-            <div class="selected-grid">
-                <!-- Case 1 -->
-                <article class="case-card" data-category="editing">
-                    <div class="case-media js-play" data-link="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G">
-                        <img src="" alt="Thumbnail" data-yt="C8cGs8iVE6U">
-                        <div class="play-btn">▶</div>
-                    </div>
-                    <div class="case-info">
-                        <div class="case-channel">YEKINDAR</div>
-                        <h3 class="case-title js-title" data-link="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G">The Real life of a CS2 Pro – Behind the Scenes</h3>
-                        <div class="case-quote">"Turned raw tournament footage into an immersive cinematic documentary."</div>
-                        <div class="case-author">Mareks Gaļinskis · @YEKINDAR</div>
-                    </div>
-                </article>
-
-                <!-- Case 2 -->
-                <article class="case-card" data-category="vfx">
-                    <div class="case-media js-play" data-link="https://youtube.com/">
-                        <img src="https://via.placeholder.com/640x360/222/fff?text=VFX+Showcase" alt="Thumbnail">
-                        <div class="play-btn">▶</div>
-                    </div>
-                    <div class="case-info">
-                        <div class="case-channel">Sci-Fi Short</div>
-                        <h3 class="case-title js-title" data-link="https://youtube.com/">CGI Tracking & Multi-Pass Compositing</h3>
-                        <div class="case-quote">"Flawless camera tracking and photoreal light integration."</div>
-                        <div class="case-author">Director · @studio</div>
-                    </div>
-                </article>
-
-                <!-- Case 3 -->
-                <article class="case-card" data-category="editing">
-                    <div class="case-media js-play" data-link="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx">
-                        <img src="" alt="Thumbnail" data-yt="oBpgMpInKLg">
-                        <div class="play-btn">▶</div>
-                    </div>
-                    <div class="case-info">
-                        <div class="case-channel">Inner Circle Esports</div>
-                        <h3 class="case-title js-title" data-link="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx">Can CS2 Pro hit 30,000 ELO in 25 Games?</h3>
-                        <div class="case-quote">"Fast-paced storytelling with high viewer retention throughout the entire video."</div>
-                        <div class="case-author">Inner Circle Org · @innercircle</div>
-                    </div>
-                </article>
-
-                <!-- Case 4 -->
-                <article class="case-card" data-category="vfx">
-                    <div class="case-media js-play" data-link="https://youtube.com/">
-                        <img src="https://via.placeholder.com/640x360/222/fff?text=VFX+Showcase" alt="Thumbnail">
-                        <div class="play-btn">▶</div>
-                    </div>
-                    <div class="case-info">
-                        <div class="case-channel">Indie Studio</div>
-                        <h3 class="case-title js-title" data-link="https://youtube.com/">Clean-Up & Object Removal</h3>
-                        <div class="case-quote">"Seamless planar tracking and clean background plates."</div>
-                        <div class="case-author">VFX Lead · @production</div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section class="portfolio-section">
-            <h2 class="section-title">More Work</h2>
-            
-            <details data-category="editing">
-                <summary>Inner Circle Esports</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx">
-                            <img src="" alt="Thumbnail" data-yt="oBpgMpInKLg">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx">Can CS2 Pro hit 30,000 ELO in 25 Games?</div>
-                            <div class="carousel-meta">Editing · SFX</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/-1KIYeXuWnI?si=hOgpRZpIaXUt0pP6">
-                            <img src="" alt="Thumbnail" data-yt="-1KIYeXuWnI">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/-1KIYeXuWnI?si=hOgpRZpIaXUt0pP6">7-річний з ВХ VS 5 ПРО-гравців</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/JQqzXoT8bfE?si=cdZRrfoxj03C_ccB">
-                            <img src="" alt="Thumbnail" data-yt="JQqzXoT8bfE">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/JQqzXoT8bfE?si=cdZRrfoxj03C_ccB">BETON x IC</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/5RLLUFWCcww?si=LC3Cy4w9mfgufae3">
-                            <img src="" alt="Thumbnail" data-yt="5RLLUFWCcww">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/5RLLUFWCcww?si=LC3Cy4w9mfgufae3">Що б Ти Вибрав…? Inner Circle CS2 Відповідають!</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/AT6w7hOLnw8?si=rbwi67f13_wnL5w-">
-                            <img src="" alt="Thumbnail" data-yt="AT6w7hOLnw8">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/AT6w7hOLnw8?si=rbwi67f13_wnL5w-">Nobody took us seriously… until ESL Pro League</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/XTDsEnA7Mf4?si=Jmne1Ok3HKD2c289">
-                            <img src="" alt="Thumbnail" data-yt="XTDsEnA7Mf4">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/XTDsEnA7Mf4?si=Jmne1Ok3HKD2c289">The best sound for CS2 players 🎧</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <details data-category="editing">
-                <summary>ТУСОВКА</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/9grWGIzSMVY?si=JQ-quCvqvUIkiH_n">
-                            <img src="" alt="Thumbnail" data-yt="9grWGIzSMVY">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/9grWGIzSMVY?si=JQ-quCvqvUIkiH_n">Ілюзія обману з RYBA ft. IT'S MARTIK, THE ROMAN, ALEKSOV, ABRAMOV</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/yTCrfuzWr2Q?si=AXdwlV4BBlbpFo4R">
-                            <img src="" alt="Thumbnail" data-yt="yTCrfuzWr2Q">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/yTCrfuzWr2Q?si=AXdwlV4BBlbpFo4R">Вгадай Хто грає в PUBG з RYBA, THE ROMAN та ALEKSOV</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/7nvQvkjU3wk?si=GNQH0thBgf2fkfkR">
-                            <img src="" alt="Thumbnail" data-yt="7nvQvkjU3wk">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/7nvQvkjU3wk?si=GNQH0thBgf2fkfkR">Вгадай Гру з ШОКЕРАМИ з RYBA. THE ROMAN і ALEKSOV проти IT'S MARTIK та ABRAMOV</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/M4Zf6ZBgOY4?si=so77cmDMW4fb3Ryx">
-                            <img src="" alt="Thumbnail" data-yt="M4Zf6ZBgOY4">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/M4Zf6ZBgOY4?si=so77cmDMW4fb3Ryx">Ілюзія обману з RYBA ft. IT'S MARTIK, ДМИТРО ТЮТЮН, THE ROMAN та ALEKSOV!</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/q54wOjfX2KI?si=N7Qvcqh09yGUyJ18">
-                            <img src="" alt="Thumbnail" data-yt="q54wOjfX2KI">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/q54wOjfX2KI?si=N7Qvcqh09yGUyJ18">Ілюзія обману з RYBA ft. ЯРОХИ, IT'S MARTIK, ALEKSOV</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <details data-category="editing">
-                <summary>YEKINDAR</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G">
-                            <img src="" alt="Thumbnail" data-yt="C8cGs8iVE6U">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G">The Real life of a CS2 Pro – Behind the Scenes of Tournaments</div>
-                            <div class="carousel-meta">Full Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <details data-category="editing">
-                <summary>Inner Circle Brawl Stars</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/VylD7GyLSd4?si=yYGF68S9Go3AaROu">
-                            <img src="" alt="Thumbnail" data-yt="VylD7GyLSd4">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/VylD7GyLSd4?si=yYGF68S9Go3AaROu">Can You Recognize Brawlers by Attacks?</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/Xr8Ry-XTnEM?si=IWfRdDyNQmFLJgMZ">
-                            <img src="" alt="Thumbnail" data-yt="Xr8Ry-XTnEM">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/Xr8Ry-XTnEM?si=IWfRdDyNQmFLJgMZ">Вгадай Карту з Brawl Stars в Реальному Житті! Inner Circle x Bezsmertny</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/-QwQyOEPUl8?si=m-PVQRKQSquMerSb">
-                            <img src="" alt="Thumbnail" data-yt="-QwQyOEPUl8">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/-QwQyOEPUl8?si=m-PVQRKQSquMerSb">Вгадай Бравлера на Дотик! Inner Circle x Bezsmertny</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <details data-category="editing">
-                <summary>FAVBET Team</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/Sb0qyipidfU?si=tnU0_zXhdLytXbGF">
-                            <img src="" alt="Thumbnail" data-yt="Sb0qyipidfU">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/Sb0qyipidfU?si=tnU0_zXhdLytXbGF">ПРОФЕСІЙНА КОМАНДА Найняла КС2 Тренера з OLX</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/UaJSEoCpWbs?si=53V5Y8l8bD7oB0dw">
-                            <img src="" alt="Thumbnail" data-yt="UaJSEoCpWbs">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/UaJSEoCpWbs?si=53V5Y8l8bD7oB0dw">Прикинулись Нубами і Замовили розбір Демки по КС на ОЛХ</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-            <details data-category="editing">
-                <summary>IC UA</summary>
-                <div class="carousel">
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/iQ7zJufk9kc?si=uMQU5UaJZN5Lk19g">
-                            <img src="" alt="Thumbnail" data-yt="iQ7zJufk9kc">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/iQ7zJufk9kc?si=uMQU5UaJZN5Lk19g">ВГАДАЙ ЕЛО в CS2 з INNER CIRCLE АС L1seYoung & fr1s ft. FABRIE</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="carousel-media js-play" data-link="https://youtu.be/A2r7Ps4nXr0?si=0-m7X1msuJpKoXHa">
-                            <img src="" alt="Thumbnail" data-yt="A2r7Ps4nXr0">
-                            <div class="play-btn">▶</div>
-                        </div>
-                        <div class="carousel-info">
-                            <div class="carousel-title js-title" data-link="https://youtu.be/A2r7Ps4nXr0?si=0-m7X1msuJpKoXHa">ВГАДАЙ РАНГ в CS2 з INNER CIRCLE AC h1mal8ya ft. Tonya & ZEFIRKA</div>
-                            <div class="carousel-meta">Editing</div>
-                        </div>
-                    </div>
-                </div>
-            </details>
-
-        </section>
-
-        <section class="contact-footer">
-            <h2>Have a project?</h2>
-            <p>Let's work together.</p>
-            <div class="contact-links">
-                <a href="#" class="contact-tag">Telegram</a>
-                <a href="#" class="contact-tag">Email</a>
-                <a href="#" class="contact-tag">Instagram</a>
-                <a href="#" class="contact-tag">YouTube</a>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div>FAYNIYFX &copy; 2026</div>
-        <div>VIDEO EDITOR · VFX ARTIST</div>
-    </footer>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox">
-        <div class="lightbox-content">
-            <button class="lightbox-close" id="lightbox-close">&times;</button>
-            <iframe id="lightbox-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
+  <!-- 3. PORTFOLIO SECTION -->
+  <section id="work">
+    <div class="head">
+      <h2 class="title">Selected Work</h2>
+      <div class="meta">01 / PORTFOLIO · FAYNIYFX</div>
     </div>
 
-    <script>
-        // YT Thumbnail Autoloading
-        document.querySelectorAll('img[data-yt]').forEach(img => {
-            const ytId = img.getAttribute('data-yt');
-            if (ytId) {
-                img.src = `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`;
-            }
-        });
+    <div class="selected">
+      <!-- EDITING FEATURED 1 -->
+      <article class="case work-editing" data-category="editing">
+        <div class="media" onclick="openVideo('C8cGs8iVE6U')">
+          <img src="https://img.youtube.com/vi/C8cGs8iVE6U/maxresdefault.jpg" alt="YEKINDAR" class="video-cover" loading="lazy">
+          <span class="play-btn">▶</span>
+        </div>
+        <div class="case-info">
+          <div class="channel"><span class="logo-circle">YT</span><span class="channel-name">YEKINDAR</span></div>
+          <h3><a href="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G" target="_blank">The Real life of a CS2 Pro – Behind the Scenes ↗</a></h3>
+          <p class="quote">“Turned raw tournament footage into an immersive cinematic documentary.”</p>
+          <div class="author">— Mareks Gaļinskis · @YEKINDAR</div>
+          <a class="watch" href="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G" target="_blank">Watch on YouTube →</a>
+        </div>
+      </article>
 
-        // Helper function for extract YT ID
-        function getYoutubeId(url) {
-            const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/;
-            const match = url.match(regex);
-            return match ? match[1] : null;
-        }
+      <!-- EDITING FEATURED 2 -->
+      <article class="case work-editing" data-category="editing">
+        <div class="media" onclick="openVideo('oBpgMpInKLg')">
+          <img src="https://img.youtube.com/vi/oBpgMpInKLg/maxresdefault.jpg" alt="Inner Circle Esports" class="video-cover" loading="lazy">
+          <span class="play-btn">▶</span>
+        </div>
+        <div class="case-info">
+          <div class="channel"><span class="logo-circle">YT</span><span class="channel-name">Inner Circle Esports</span></div>
+          <h3><a href="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx" target="_blank">Can CS2 Pro hit 30,000 ELO in 25 Games? ↗</a></h3>
+          <p class="quote">“Fast-paced storytelling with high viewer retention throughout the entire video.”</p>
+          <div class="author">— Inner Circle Org · @innercircle</div>
+          <a class="watch" href="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx" target="_blank">Watch on YouTube →</a>
+        </div>
+      </article>
 
-        // Lightbox logic
-        const lightbox = document.getElementById('lightbox');
-        const iframe = document.getElementById('lightbox-iframe');
-        const closeBtn = document.getElementById('lightbox-close');
+      <!-- VFX FEATURED 1 -->
+      <article class="case work-vfx" data-category="vfx">
+        <div class="media" style="background: radial-gradient(circle at 70% 30%, #f2a2c433, transparent 40%), linear-gradient(135deg, #1f1f1f, #090909);">
+          <span class="play-btn" style="pointer-events:none;">✦</span>
+        </div>
+        <div class="case-info">
+          <div class="channel"><span class="logo-circle">VFX</span><span class="channel-name">Sci-Fi Short Project</span></div>
+          <h3>CGI Tracking &amp; Multi-Pass Compositing</h3>
+          <p class="quote">“Flawless 3D camera tracking and photoreal lighting integration in Nuke &amp; Blender.”</p>
+          <div class="author">— Studio Director · @production</div>
+          <span class="watch" style="color:var(--pink);border-color:var(--pink);">VFX Breakdown Reel</span>
+        </div>
+      </article>
 
-        function openLightbox(url) {
-            const ytId = getYoutubeId(url);
-            if (ytId) {
-                iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1`;
-                lightbox.classList.add('active');
-            } else {
-                window.open(url, '_blank');
-            }
-        }
+      <!-- VFX FEATURED 2 -->
+      <article class="case work-vfx" data-category="vfx">
+        <div class="media" style="background: radial-gradient(circle at 30% 70%, #f2a2c428, transparent 40%), linear-gradient(135deg, #181818, #0a0a0a);">
+          <span class="play-btn" style="pointer-events:none;">✦</span>
+        </div>
+        <div class="case-info">
+          <div class="channel"><span class="logo-circle">VFX</span><span class="channel-name">Commercial Studio</span></div>
+          <h3>Clean-Up, Wire Removal &amp; Planar Tracking</h3>
+          <p class="quote">“Seamless planar tracking, background plate restoration and clean camera motion.”</p>
+          <div class="author">— VFX Supervisor · @creative</div>
+          <span class="watch" style="color:var(--pink);border-color:var(--pink);">Clean-Up Showcase</span>
+        </div>
+      </article>
+    </div>
 
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            iframe.src = '';
-        }
+    <!-- More Work Expandable (<details>) -->
+    <details>
+      <summary>More Work ↓</summary>
+      <div class="all">
 
-        document.querySelectorAll('.js-play').forEach(btn => {
-            btn.addEventListener('click', () => {
-                openLightbox(btn.getAttribute('data-link'));
-            });
-        });
+        <!-- 1. Inner Circle Esports -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">IC</span>
+            <div>
+              <h3>Inner Circle Esports</h3>
+              <div class="count">6 projects · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/oBpgMpInKLg/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="oBpgMpInKLg" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/oBpgMpInKLg?si=JsUNeNj_lSI1PFGx" target="_blank">Can CS2 Pro hit 30,000 ELO in 25 Games? ↗</a>
+                <div class="video-sub">Editing · SFX</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/-1KIYeXuWnI/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="-1KIYeXuWnI" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/-1KIYeXuWnI?si=hOgpRZpIaXUt0pP6" target="_blank">7-річний з ВХ VS 5 ПРО-гравців | Inner Circle CS2 vs DAVI ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/JQqzXoT8bfE/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="JQqzXoT8bfE" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/JQqzXoT8bfE?si=cdZRrfoxj03C_ccB" target="_blank">BETON x IC ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/5RLLUFWCcww/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="5RLLUFWCcww" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/5RLLUFWCcww?si=LC3Cy4w9mfgufae3" target="_blank">Що б Ти Вибрав…? Inner Circle CS2 Відповідають! ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/AT6w7hOLnw8/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="AT6w7hOLnw8" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/AT6w7hOLnw8?si=rbwi67f13_wnL5w-" target="_blank">Nobody took us seriously… until ESL Pro League ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/XTDsEnA7Mf4/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="XTDsEnA7Mf4" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/XTDsEnA7Mf4?si=Jmne1Ok3HKD2c289" target="_blank">The best sound for CS2 players 🎧 ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        document.querySelectorAll('.js-title').forEach(title => {
-            title.addEventListener('click', () => {
-                const url = title.getAttribute('data-link');
-                if (url) window.open(url, '_blank');
-            });
-        });
+        <!-- 2. ТУСОВКА -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">ТУС</span>
+            <div>
+              <h3>ТУСОВКА</h3>
+              <div class="count">5 projects · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/9grWGIzSMVY/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="9grWGIzSMVY" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/9grWGIzSMVY?si=JQ-quCvqvUIkiH_n" target="_blank">Ілюзія обману з RYBA ft. IT’S MARTIK, THE ROMAN, ALEKSOV, ABRAMOV ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/yTCrfuzWr2Q/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="yTCrfuzWr2Q" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/yTCrfuzWr2Q?si=AXdwlV4BBlbpFo4R" target="_blank">Вгадай Хто грає в PUBG з RYBA, THE ROMAN та ALEKSOV ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/7nvQvkjU3wk/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="7nvQvkjU3wk" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/7nvQvkjU3wk?si=GNQH0thBgf2fkfkR" target="_blank">Вгадай Гру з ШОКЕРАМИ з RYBA. THE ROMAN і ALEKSOV проти IT’S MARTIK та ABRAMOV ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/M4Zf6ZBgOY4/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="M4Zf6ZBgOY4" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/M4Zf6ZBgOY4?si=so77cmDMW4fb3Ryx" target="_blank">Ілюзія обману з RYBA ft. IT’S MARTIK, ДМИТРО ТЮТЮН, THE ROMAN та ALEKSOV! ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/q54wOjfX2KI/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="q54wOjfX2KI" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/q54wOjfX2KI?si=N7Qvcqh09yGUyJ18" target="_blank">Ілюзія обману з RYBA ft. ЯРОХИ, IT’S MARTIK, ALEKSOV ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        closeBtn.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
-        });
-    <\/script>
+        <!-- 3. YEKINDAR -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">YEK</span>
+            <div>
+              <h3>YEKINDAR</h3>
+              <div class="count">1 project · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/C8cGs8iVE6U/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="C8cGs8iVE6U" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/C8cGs8iVE6U?si=D0q093jW_2Yf9e-G" target="_blank">The Real life of a CS2 Pro – Behind the Scenes of Tournaments ↗</a>
+                <div class="video-sub">Full Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Inner Circle Brawl Stars -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">BS</span>
+            <div>
+              <h3>Inner Circle Brawl Stars</h3>
+              <div class="count">3 projects · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/VylD7GyLSd4/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="VylD7GyLSd4" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/VylD7GyLSd4?si=yYGF68S9Go3AaROu" target="_blank">Can You Recognize Brawlers by Attacks? ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/Xr8Ry-XTnEM/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="Xr8Ry-XTnEM" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/Xr8Ry-XTnEM?si=IWfRdDyNQmFLJgMZ" target="_blank">Вгадай Карту з Brawl Stars в Реальному Житті! Inner Circle x Bezsmertny ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/-QwQyOEPUl8/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="-QwQyOEPUl8" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/-QwQyOEPUl8?si=m-PVQRKQSquMerSb" target="_blank">Вгадай Бравлера на Дотик! Inner Circle x Bezsmertny ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. FAVBET Team -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">FAV</span>
+            <div>
+              <h3>FAVBET Team</h3>
+              <div class="count">2 projects · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/Sb0qyipidfU/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="Sb0qyipidfU" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/Sb0qyipidfU?si=tnU0_zXhdLytXbGF" target="_blank">ПРОФЕСІЙНА КОМАНДА Найняла КС2 Тренера з OLX ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/UaJSEoCpWbs/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="UaJSEoCpWbs" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/UaJSEoCpWbs?si=53V5Y8l8bD7oB0dw" target="_blank">Прикинулись Нубами і Замовили розбір Демки по КС на ОЛХ ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. IC UA -->
+        <div class="group work-editing" data-category="editing">
+          <div class="group-head">
+            <span class="logo-circle">UA</span>
+            <div>
+              <h3>IC UA</h3>
+              <div class="count">2 projects · swipe / scroll</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/iQ7zJufk9kc/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="iQ7zJufk9kc" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/iQ7zJufk9kc?si=uMQU5UaJZN5Lk19g" target="_blank">ВГАДАЙ ЕЛО в CS2 з INNER CIRCLE АС L1seYoung &amp; fr1s ft. FABRIE ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+              <div class="card">
+                <div class="thumb">
+                  <img src="https://img.youtube.com/vi/A2r7Ps4nXr0/maxresdefault.jpg" alt="" class="video-cover" loading="lazy">
+                  <button type="button" class="play-btn" data-video="A2r7Ps4nXr0" aria-label="Play video">▶</button>
+                </div>
+                <a class="video-title" href="https://youtu.be/A2r7Ps4nXr0?si=0-m7X1msuJpKoXHa" target="_blank">ВГАДАЙ РАНГ в CS2 з INNER CIRCLE AC h1mal8ya ft. Tonya &amp; ZEFIRKA ↗</a>
+                <div class="video-sub">Editing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VFX Carousel Group -->
+        <div class="group work-vfx" data-category="vfx">
+          <div class="group-head">
+            <span class="logo-circle">FX</span>
+            <div>
+              <h3>VFX &amp; CGI Compositing Hub</h3>
+              <div class="count">2 projects · breakdown reel</div>
+            </div>
+          </div>
+          <div class="carousel">
+            <div class="row">
+              <div class="card">
+                <div class="thumb" style="background: radial-gradient(circle at 70% 30%, #f2a2c433, transparent 40%), linear-gradient(135deg, #222, #0d0d0d);">
+                  <span class="play-btn" style="pointer-events:none;">✦</span>
+                </div>
+                <div class="video-title">3D Matchmove &amp; Lighting Integration</div>
+                <div class="video-sub">Blender · Nuke</div>
+              </div>
+              <div class="card">
+                <div class="thumb" style="background: radial-gradient(circle at 30% 70%, #f2a2c422, transparent 40%), linear-gradient(135deg, #1c1c1c, #090909);">
+                  <span class="play-btn" style="pointer-events:none;">✦</span>
+                </div>
+                <div class="video-title">Rotoscoping, Cleanup &amp; Plate Restoration</div>
+                <div class="video-sub">Mocha Pro · After Effects</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </details>
+  </section>
+
+  <!-- 4. CONTACT FOOTER -->
+  <section class="contact" id="contact">
+    <div>
+      <div class="eyebrow">Have a project?</div>
+      <h2 class="contact-title">Let's work<br>together.</h2>
+    </div>
+    <div class="links">
+      <a href="https://t.me/MaxFayniy" target="_blank">Telegram</a>
+      <a href="mailto:maxfayniy@gmail.com">Email</a>
+      <a href="https://www.youtube.com/channel/UC8wWFrrG8bcmyrpP2uUB-xg" target="_blank">YouTube</a>
+      <a href="#">Instagram</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>FAYNIYFX © 2026</span>
+  <span>VIDEO EDITOR · VFX ARTIST</span>
+</footer>
+
+<!-- 5. LIGHTBOX PLAYER -->
+<div class="modal-backdrop" id="videoModal">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close video">✕</button>
+    <div class="modal-iframe-wrap">
+      <iframe id="modalIframe" src="" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('videoModal');
+  const iframe = document.getElementById('modalIframe');
+  const closeBtn = document.getElementById('modalCloseBtn');
+
+  function openVideo(videoId) {
+    if (!videoId) return;
+    iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?autoplay=1&rel=0';
+    modal.classList.add('active');
+  }
+
+  function closeVideo() {
+    modal.classList.remove('active');
+    iframe.src = '';
+  }
+
+  document.querySelectorAll('.play-btn[data-video]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openVideo(btn.dataset.video);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeVideo);
+  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeVideo(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeVideo(); });
+</script>
 </body>
 </html>
