@@ -45,13 +45,13 @@
       background: #070707;
       pointer-events: none;
       opacity: 1;
-      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 3.6s cubic-bezier(0.16, 1, 0.25, 1);
     }
     .intro-curtain.fade-out {
       opacity: 0;
     }
     
-    /* 1. UPGRADED PREMIUM HEADER (SEAMLESS MORPHING CAPSULE) */
+    /* 1. UPGRADED PREMIUM HEADER (SEAMLESS MORPHING CAPSULE - 2X LONGER & ULTRA SMOOTH) */
     .header {
       position: fixed;
       z-index: 1000;
@@ -70,13 +70,13 @@
       box-sizing: border-box;
       overflow: hidden;
       will-change: transform, width, max-width, padding, border-color, background, box-shadow;
-      transition: transform 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  width 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  max-width 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  padding 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  background 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 1.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 1.9s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  width 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  max-width 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  padding 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  background 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  border-color 3.8s cubic-bezier(0.16, 1, 0.25, 1),
+                  box-shadow 3.8s cubic-bezier(0.16, 1, 0.25, 1);
     }
     
     /* INITIAL STATE: Centered on screen, PURE TEXT FAYNIYFX (NO BORDER / FRAME) */
@@ -107,7 +107,7 @@
       align-items: center;
       gap: 12px;
       flex: 1;
-      transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
+      transition: opacity 2.4s cubic-bezier(0.16, 1, 0.25, 1) 1.2s;
     }
     .nav-side.left { justify-content: flex-start; }
     .nav-side.right { justify-content: flex-end; }
@@ -139,11 +139,47 @@
       font-weight: 600;
       color: #fff;
       display: inline-block;
+      perspective: 800px;
       transition: color .2s, text-shadow .2s;
     }
     .logo:hover { 
       color: var(--pink); 
       text-shadow: 0 0 20px var(--pink-glow);
+    }
+    
+    /* LETTER FLY-IN ANIMATION (ПО БУКВІ) */
+    .intro-char {
+      display: inline-block;
+      color: inherit;
+      transform-origin: center bottom;
+      will-change: transform, opacity, filter;
+    }
+    body.intro-active .intro-char {
+      opacity: 0;
+      animation: introFlyInChar 0.9s cubic-bezier(0.16, 1, 0.25, 1) calc(150ms + var(--char-index) * 110ms) both;
+    }
+    @keyframes introFlyInChar {
+      0% {
+        opacity: 0;
+        transform: translateY(46px) scale(0.8) rotateX(25deg);
+        filter: blur(12px);
+        text-shadow: 0 0 0 transparent;
+      }
+      60% {
+        opacity: 1;
+        filter: blur(0px);
+        text-shadow: 0 0 20px var(--pink), 0 0 35px var(--pink-glow);
+      }
+      82% {
+        transform: translateY(-3px) scale(1.03) rotateX(-2deg);
+        text-shadow: 0 0 10px var(--pink-glow);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+        filter: blur(0px);
+        text-shadow: none;
+      }
     }
     
     .header-link {
@@ -159,7 +195,7 @@
     .header-link:hover { color: var(--pink); }
 
     main {
-      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 3.8s cubic-bezier(0.16, 1, 0.25, 1), transform 3.8s cubic-bezier(0.16, 1, 0.25, 1);
     }
     body.intro-active main {
       opacity: 0;
@@ -173,7 +209,7 @@
       opacity: 0;
     }
     .footer {
-      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 3.8s cubic-bezier(0.16, 1, 0.25, 1);
     }
 
     /* Pulsing status indicator in header */
@@ -982,7 +1018,7 @@
     </div>
   </div>
   <div class="logo-wrap">
-    <a class="logo" href="index.html" id="headerLogo">FAYNIYFX</a>
+    <a class="logo" href="index.html" id="headerLogo" aria-label="FAYNIYFX"><span class="intro-char" style="--char-index: 0">F</span><span class="intro-char" style="--char-index: 1">A</span><span class="intro-char" style="--char-index: 2">Y</span><span class="intro-char" style="--char-index: 3">N</span><span class="intro-char" style="--char-index: 4">I</span><span class="intro-char" style="--char-index: 5">Y</span><span class="intro-char" style="--char-index: 6">F</span><span class="intro-char" style="--char-index: 7">X</span></a>
   </div>
   <div class="nav-side right">
     <a class="header-link" href="products.html">PRODUCTS</a>
@@ -1473,7 +1509,7 @@
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeVideo(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeVideo(); });
 
-  // CINEMATIC SEAMLESS MORPHING HEADER ANIMATION (3X SMOOTHER)
+  // CINEMATIC SEAMLESS MORPHING HEADER ANIMATION (LETTER FLY-IN + 2X LONGER & ULTRA-SMOOTH)
   (function initIntroAnimation() {
     // Ensure top position on every reload
     window.scrollTo(0, 0);
@@ -1483,6 +1519,16 @@
 
     const curtain = document.getElementById('intro-curtain');
     const header = document.getElementById('mainHeader');
+    const logo = document.getElementById('headerLogo');
+
+    // Ensure all characters in logo have .intro-char spans with staggered index
+    if (logo && !logo.querySelector('.intro-char')) {
+      const text = logo.textContent.trim();
+      logo.setAttribute('aria-label', text);
+      logo.innerHTML = Array.from(text).map((ch, i) => 
+        `<span class="intro-char" style="--char-index:${i}">${ch === ' ' ? '&nbsp;' : ch}</span>`
+      ).join('');
+    }
 
     function cleanup() {
       document.documentElement.classList.remove('intro-active');
@@ -1503,19 +1549,20 @@
       started = true;
       window.scrollTo(0, 0);
 
-      // Header starts in center as pure text FayniyFX (without frame/border).
-      // After a comfortable resting beat (~700ms), glide up smoothly & stretch out into full header:
+      // 1. Letters F-A-Y-N-I-Y-F-X fly in one by one in the center of the dark screen.
+      // Last letter lands at ~1.8s. Beat pauses comfortably until 2.5s.
+      // 2. At 2.5s, the 2x longer (3.8s), ultra-smooth morph to the top starts:
       setTimeout(() => {
         header.classList.remove('intro-capsule');
         curtain.classList.add('fade-out');
         document.documentElement.classList.remove('intro-active');
         document.body.classList.remove('intro-active');
-      }, 700);
+      }, 2500);
 
-      // Complete cleanup after the smooth 1.9s transition finishes
+      // Complete cleanup after the smooth 3.8s transition finishes (2.5s + 3.8s = 6.3s)
       setTimeout(() => {
         curtain.style.display = 'none';
-      }, 2800);
+      }, 6600);
     }
 
     if (document.fonts && document.fonts.ready) {
@@ -1525,8 +1572,8 @@
     }
 
     // Safety timeouts
-    setTimeout(runIntro, 200);
-    setTimeout(cleanup, 3200);
+    setTimeout(runIntro, 250);
+    setTimeout(cleanup, 7600);
   })();
 </script>
 </body>
