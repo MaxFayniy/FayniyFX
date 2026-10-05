@@ -26,6 +26,53 @@
     body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);overflow-x:hidden}
     a{color:inherit;text-decoration:none}
     
+    /* PRELOADER INTRO ANIMATION */
+    body.intro-active {
+      overflow: hidden;
+    }
+    
+    .intro-curtain {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: #070707;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .intro-curtain.fade-out {
+      opacity: 0;
+    }
+    
+    .intro-logo {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      font-family: var(--font-heading);
+      font-size: clamp(38px, 6vw, 68px);
+      letter-spacing: clamp(10px, 2.2vw, 22px);
+      font-weight: 600;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      opacity: 0;
+      user-select: none;
+      pointer-events: none;
+      z-index: 1000000;
+      text-shadow: 0 0 35px var(--pink-glow), 0 0 70px rgba(242, 162, 196, 0.2);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity, letter-spacing;
+    }
+    .intro-logo.reveal {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
     /* 1. UPGRADED PREMIUM HEADER (Wētā FX / Rodeo FX style) */
     .header {
       position: fixed;
@@ -46,7 +93,11 @@
       justify-content: space-between;
       padding: 0 24px;
       box-shadow: 0 12px 36px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06);
-      transition: all .3s ease;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), background .3s, border-color .3s;
+    }
+    body.intro-active .header {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-14px);
     }
     
     .nav-side {
@@ -59,8 +110,12 @@
     .nav-side.right { justify-content: flex-end; }
     
     .logo-wrap {
-      flex: 0 0 auto;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       text-align: center;
+      pointer-events: auto;
     }
     .logo {
       font-family: var(--font-heading);
@@ -75,31 +130,9 @@
       color: var(--pink); 
       text-shadow: 0 0 20px var(--pink-glow);
     }
-    
-    .header-nav-btn {
-      padding: 7px 18px;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 30px;
-      color: var(--muted);
-      font-family: var(--font-ui);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      cursor: pointer;
-      background: transparent;
-      transition: all .25s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-    }
-    .header-nav-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
-    .header-nav-btn.active {
-      background: var(--pink);
-      color: #070707;
-      border-color: var(--pink);
-      font-weight: 600;
-      box-shadow: 0 0 20px var(--pink-glow);
+    .logo.intro-docking {
+      opacity: 0 !important;
+      visibility: hidden;
     }
     
     .header-link {
@@ -113,6 +146,17 @@
       transition: all .25s ease;
     }
     .header-link:hover { color: var(--pink); }
+
+    main {
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.intro-active main {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    body.intro-active .footer {
+      opacity: 0;
+    }
 
     /* Pulsing status indicator in header */
     .status-pill {
@@ -789,26 +833,29 @@
     /* RESPONSIVE (< 850px) */
     @media(max-width:850px){
       .header {
-        height: auto;
-        padding: 10px 16px;
-        flex-direction: column;
-        gap: 8px;
-        border-radius: 20px;
+        height: 50px;
+        padding: 0 14px;
+        border-radius: 26px;
       }
-      .logo-wrap { order: 1; }
-      .nav-side {
+      .logo { font-size: 18px; letter-spacing: 2.5px; }
+      .nav-side.left { display: none; }
+      .nav-side.right {
         width: 100%;
-        justify-content: center !important;
-        gap: 8px;
+        justify-content: flex-end !important;
+        gap: 4px;
       }
-      .nav-side.left { order: 2; }
-      .nav-side.right { order: 3; }
-      .header-nav-btn, .header-link { font-size: 10px; padding: 5px 12px; }
+      .header-link { font-size: 9px; padding: 4px 7px; letter-spacing: 0.8px; }
       .status-pill { display: none; }
+
+      @media(max-width:550px){
+        .header { height: 48px; padding: 0 12px; }
+        .logo { font-size: 16px; letter-spacing: 2px; }
+        .header-link { font-size: 8.5px; padding: 3px 5px; letter-spacing: 0.5px; }
+      }
 
       .hero-container {
         min-height: auto;
-        padding-top: 165px;
+        padding-top: 105px;
         text-align: center;
         gap: 24px;
       }
@@ -882,22 +929,25 @@
     }
   </style>
 </head>
-<body>
+<body class="intro-active">
+
+<!-- CINEMATIC PRELOADER OVERLAY -->
+<div id="intro-curtain" class="intro-curtain" aria-hidden="true">
+  <div class="intro-logo" id="introLogo">FAYNIYFX</div>
+</div>
 
 <!-- 1. UPGRADED SYMMETRICAL HEADER -->
-<header class="header">
+<header class="header" id="mainHeader">
   <div class="nav-side left">
-    <button type="button" class="header-nav-btn" id="hdr-btn-editing" onclick="selectCategory('editing')">EDITING</button>
     <div class="status-pill">
       <span class="status-dot"></span>
       <span>Available</span>
     </div>
   </div>
   <div class="logo-wrap">
-    <a class="logo" href="index.html">FAYNIYFX</a>
+    <a class="logo intro-docking" href="index.html" id="headerLogo">FAYNIYFX</a>
   </div>
   <div class="nav-side right">
-    <button type="button" class="header-nav-btn" id="hdr-btn-vfx" onclick="selectCategory('vfx')">VFX</button>
     <a class="header-link" href="products.html">PRODUCTS</a>
     <a class="header-link" href="#contact">CONTACT</a>
   </div>
@@ -1335,12 +1385,6 @@
 
     currentCategory = cat;
 
-    // Update Header Buttons
-    const hdrEdit = document.getElementById('hdr-btn-editing');
-    const hdrVfx = document.getElementById('hdr-btn-vfx');
-    if (hdrEdit) hdrEdit.classList.toggle('active', cat === 'editing');
-    if (hdrVfx) hdrVfx.classList.toggle('active', cat === 'vfx');
-
     // Update Hero Choice Buttons
     const heroEdit = document.getElementById('hero-btn-editing');
     const heroVfx = document.getElementById('hero-btn-vfx');
@@ -1391,6 +1435,86 @@
   if (closeBtn) closeBtn.addEventListener('click', closeVideo);
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeVideo(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeVideo(); });
+
+  // CINEMATIC PRELOADER INTRO ANIMATION
+  (function initIntroAnimation() {
+    const introCurtain = document.getElementById('intro-curtain');
+    const introLogo = document.getElementById('introLogo');
+    const headerLogo = document.getElementById('headerLogo');
+
+    if (!introCurtain || !introLogo || !headerLogo) {
+      document.body.classList.remove('intro-active');
+      if (headerLogo) headerLogo.classList.remove('intro-docking');
+      return;
+    }
+
+    // Skip if user prefers reduced motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.body.classList.remove('intro-active');
+      headerLogo.classList.remove('intro-docking');
+      introCurtain.style.display = 'none';
+      introLogo.style.display = 'none';
+      return;
+    }
+
+    let started = false;
+
+    function runIntro() {
+      if (started) return;
+      started = true;
+
+      // Phase 1: Logo fades in with bloom in the center
+      setTimeout(() => {
+        introLogo.classList.add('reveal');
+      }, 80);
+
+      // Phase 2: Flight up to header and reveal of site
+      setTimeout(() => {
+        const targetRect = headerLogo.getBoundingClientRect();
+        const currentRect = introLogo.getBoundingClientRect();
+
+        const targetCenterX = targetRect.left + targetRect.width / 2;
+        const targetCenterY = targetRect.top + targetRect.height / 2;
+        const screenCenterX = window.innerWidth / 2;
+        const screenCenterY = window.innerHeight / 2;
+
+        const moveX = targetCenterX - screenCenterX;
+        const moveY = targetCenterY - screenCenterY;
+
+        const scaleRatio = currentRect.height > 0 ? (targetRect.height / currentRect.height) : 0.45;
+
+        introLogo.style.transition = 'transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.85s ease, text-shadow 0.85s ease';
+        introLogo.style.transform = `translate(-50%, -50%) translate3d(${moveX.toFixed(2)}px, ${moveY.toFixed(2)}px, 0) scale(${scaleRatio.toFixed(4)})`;
+        introLogo.style.letterSpacing = '5px';
+        introLogo.style.textShadow = 'none';
+
+        // Concurrently fade out black curtain and reveal whole site
+        introCurtain.classList.add('fade-out');
+        document.body.classList.remove('intro-active');
+      }, 980);
+
+      // Phase 3: Seamless landing into header logo & cleanup
+      setTimeout(() => {
+        headerLogo.classList.remove('intro-docking');
+        introCurtain.style.display = 'none';
+        introLogo.style.display = 'none';
+      }, 1860);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(runIntro);
+    } else {
+      window.addEventListener('DOMContentLoaded', runIntro);
+    }
+
+    // Safety timeouts in case fonts or events take long
+    setTimeout(runIntro, 200);
+    setTimeout(() => {
+      document.body.classList.remove('intro-active');
+      if (headerLogo) headerLogo.classList.remove('intro-docking');
+      if (introCurtain) introCurtain.style.display = 'none';
+    }, 2800);
+  })();
 </script>
 </body>
 </html>
